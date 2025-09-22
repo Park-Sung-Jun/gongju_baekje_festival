@@ -117,22 +117,19 @@ html,body{
 .rcs-title{font-size:14.4px;font-weight:800;margin:0 0 4px}
 .rcs-desc{font-size:12.6px;line-height:1.4;white-space:pre-line;margin:0}
 
-/* 버튼: 2개 가로(모바일은 1열) */
 .rcs-cta{
   padding:8px 12px 12px;
   box-sizing:border-box;
-  display:grid;
-  grid-template-columns:1fr 1fr;
+  display:flex;
+  flex-direction:column;  /* 세로 스택 */
   gap:8px;
-}
-@media (max-width:380px){
-  .rcs-cta{ grid-template-columns:1fr; }
 }
 .cta-btn{
   display:block; width:100%; text-align:center;
-  text-decoration:none; background:#eef1f5; border:1px solid var(--stroke);
-  color:var(--text); border-radius:9px; padding:10px 8px;
-  font-size:14px; font-weight:700; box-sizing:border-box; min-width:0;
+  text-decoration:none; background:#eef1f5;
+  border:1px solid var(--stroke); color:var(--text);
+  border-radius:9px; padding:10px 8px;
+  font-size:14px; font-weight:700; box-sizing:border-box;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 @media (prefers-color-scheme:dark){ .cta-btn{ background:#12161c } }
@@ -408,7 +405,7 @@ New판타지아
     desc:`공주 백제문화제의 다양한 모습을 영상으로 만나보시기 바랍니다.`,
     ctas: [
       { text:"▶ 홍보영상 보러가기", href:"https://www.youtube.com/watch?v=zzNfbfTQC70" },
-      { text:"▶ 응원댓글 이벤트", href:"https://admin.blog.naver.com/PostView.naver?blogId=cyber_gongju&logNo=224009980172&categoryNo=56&parentCategoryNo=&from=thumbnailList" }
+      { text:"▶ 응원댓글 이벤트", href:"https://www.youtube.com/watch?v=zzNfbfTQC70" }
     ],
     alt:"홍보 영상 이미지"
   },
@@ -434,4 +431,58 @@ New판타지아
 많은 참여 부탁드립니다.
 `,
     ctas: [
-      { text:"▶ 설문 참여하기", href:"https://forms
+      { text:"▶ 설문 참여하기", href:"https://forms.gle/5XfU4a5u5wU3LKRN9" },
+    ],
+    alt:"설문 이벤트 이미지"
+  }
+];
+
+function makeSlide(s){
+  const slide = document.createElement('div'); slide.className='swiper-slide';
+  const card = document.createElement('article'); card.className='rcs-card'; card.setAttribute('role','article'); card.setAttribute('aria-label', s.title);
+
+  // 이미지
+  const hero = document.createElement('div'); hero.className='rcs-hero';
+  const img = document.createElement('img'); img.src=s.img; img.alt=s.alt || s.title; img.loading='lazy'; img.decoding='async';
+  hero.appendChild(img);
+
+  // 텍스트
+  const content = document.createElement('div'); content.className='rcs-content';
+  const h3 = document.createElement('h3'); h3.className='rcs-title'; h3.textContent=s.title;
+  const desc = document.createElement('div'); desc.className='rcs-desc'; desc.textContent=s.desc;
+  content.append(h3, desc);
+
+  // 버튼(2개)
+  const cta = document.createElement('div'); cta.className='rcs-cta';
+  const actions = Array.isArray(s.ctas) ? s.ctas
+                 : (s.cta && s.href ? [{text:s.cta, href:s.href}] : []);
+  actions.forEach((act) => {
+    const a = document.createElement('a');
+    a.className='cta-btn';
+    a.href = act.href;
+    a.textContent = act.text;
+    a.setAttribute('aria-label', act.text);
+    a.target = '_blank'; a.rel = 'noopener noreferrer';
+    cta.appendChild(a);
+  });
+
+  card.append(hero, content, cta);
+  slide.appendChild(card);
+  return slide;
+}
+
+const wrapper = document.getElementById('rcsWrapper');
+slides.forEach(s => wrapper.appendChild(makeSlide(s)));
+
+function initSwiper(){
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cfg = {slidesPerView:'auto',spaceBetween:10,loop:false,centeredSlides:false,grabCursor:true,
+    pagination:{el:'.swiper-pagination',clickable:true},keyboard:{enabled:true,onlyInViewport:true},a11y:{enabled:true}};
+  if(!reduce){cfg.autoplay={delay:3300,disableOnInteraction:false,stopOnLastSlide:true};}
+  if (window.Swiper) new Swiper('.rcs-swiper', cfg);
+}
+if (document.readyState === 'complete' || document.readyState === 'interactive') initSwiper();
+else document.addEventListener('DOMContentLoaded', initSwiper, {once:true});
+</script>
+</body>
+</html>
