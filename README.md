@@ -1,1 +1,1 @@
-# gongju_baekje_festival
+# 제71회 공주백제문화제 홍보문자
